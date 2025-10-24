@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <h2 class="mb-4">TTC Calculator</h2>
+
+  <div class="row g-3">
+    <!-- Prix HT Input -->
+    <div class="col-md-4">
+      <label for="priceHT" class="form-label">Prix HT</label>
+      <input
+        type="number"
+        id="priceHT"
+        class="form-control"
+        [(ngModel)]="priceHT"
+        placeholder="0"
+        min="0">
+    </div>
+
+    <!-- Quantité Input -->
+    <div class="col-md-4">
+      <label for="quantity" class="form-label">Quantité</label>
+      <input
+        type="number"
+        id="quantity"
+        class="form-control"
+        [(ngModel)]="quantity"
+        placeholder="1"
+        min="1">
+    </div>
+
+    <!-- TVA Input -->
+    <div class="col-md-4">
+      <label for="tva" class="form-label">TVA</label>
+      <input
+        type="number"
+        id="tva"
+        class="form-control"
+        [(ngModel)]="tva"
+        placeholder="18"
+        min="0"
+        max="100">
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="row g-3 mt-3">
+    <!-- Prix unitaire TTC -->
+    <div class="col-md-4">
+      <div class="result-box unit-price">
+        <div class="result-label">Prix unitaire TTC</div>
+        <div class="result-value">${{unitPriceTTC().toFixed(2)}}</div>
+      </div>
+    </div>
+
+    <!-- Prix total TTC -->
+    <div class="col-md-4">
+      <div class="result-box total-price">
+        <div class="result-label">Prix total TTC</div>
+        <div class="result-value">${{priceTTC().toFixed(2)}}</div>
+      </div>
+    </div>
+
+    <!-- Discount -->
+    <div class="col-md-4">
+      <div class="result-box discount" [class.no-discount]="discountRate() === 0">
+        <div class="result-label">Discount</div>
+        <div class="result-value">
+          <span *ngIf="discountRate() === 0">$0.00</span>
+          <span *ngIf="discountRate() > 0">-{{(discountRate() * 100).toFixed(0)}}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
