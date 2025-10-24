@@ -2,24 +2,28 @@
 <form [formGroup]="form">
   Name:
   <input type="text" class="form-control" formControlName="name" />
-  <div
-    *ngIf="form.get('name')?.errors && form.get('name')?.touched"
+  @if (form.get('name')?.errors && form.get('name')?.touched) {
+<div
+   
     class="alert alert-danger"
   >
     Ce champ est obligatoire
   </div>
+}
   Firstname:
   <input type="text" class="form-control" formControlName="firstname" /> Age:
   <input type="text" class="form-control" formControlName="age" /> Cin:
   <input type="text" class="form-control" formControlName="cin" />
-  <div
-    *ngIf="
+  @if (
       form.errors && form.errors['cinFirstCars'] && cin?.touched && age?.touched
-    "
+    ) {
+<div
+   
     class="alert alert-danger"
   >
     Cette Cin est invalide
   </div>
+}
   Job: <input type="text" class="form-control" formControlName="job" /> Path:
   <input type="text" class="form-control" formControlName="path" />
 

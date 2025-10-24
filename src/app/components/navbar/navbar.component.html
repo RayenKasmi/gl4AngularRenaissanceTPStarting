@@ -35,13 +35,15 @@
           routerLinkActive="active text-primary"
           >Cv</a
         >
-        <a
-          *ngIf="authService.isAuthenticated()"
+        @if (authService.isAuthenticated()) {
+<a
+         
           class="nav-link"
           [routerLink]="['cv/add']"
           routerLinkActive="active text-primary"
           >Add Cv</a
         >
+}
         <a
           class="nav-link"
           [routerLink]="['todo']"
@@ -66,19 +68,23 @@
           routerLinkActive="active text-primary"
           >Rh</a
         >
-        <a
-          *ngIf="!authService.isAuthenticated()"
+        @if (!authService.isAuthenticated()) {
+<a
+         
           class="nav-link"
           [routerLink]="['login']"
           routerLinkActive="active text-primary"
           >Login</a
         >
-        <a
-          *ngIf="authService.isAuthenticated()"
+}
+        @if (authService.isAuthenticated()) {
+<a
+         
           class="nav-link"
           (click)="logout()"
           >Logout</a
         >
+}
       </div>
     </div>
   </div>

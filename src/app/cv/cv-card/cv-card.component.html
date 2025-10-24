@@ -1,4 +1,5 @@
-<div class="card-container" *ngIf="cv">
+@if (cv) {
+<div class="card-container">
   <div class="card">
     <div class="front">
       <div class="cover">
@@ -60,3 +61,4 @@
     </div>
   </div>
 </div>
+}
