@@ -1,18 +1,134 @@
-<div class="row">
-  <div class="col">
-    <ol class="list-group">
-      @for (todo of todos; track todo) {
-<li class="list-group-item">
-        {{todo.name}} : {{todo.content}}
-        <i (click)="deleteTodo(todo)" class="fa fa-trash" aria-hidden="true"></i>
-      </li>
-}
-    </ol>
+<div class="todo-container">
+  <h1>Todo Board</h1>
+  
+  <!-- Add Todo Form -->
+  <div class="add-todo">
+    <input 
+      [(ngModel)]="newTodoName" 
+      placeholder="Todo name" 
+      class="form-control"
+      type="text">
+    <input 
+      [(ngModel)]="newTodoContent" 
+      placeholder="Todo content" 
+      class="form-control"
+      type="text">
+    <button 
+      (click)="addTodo()" 
+      [disabled]="!newTodoName.trim() || !newTodoContent.trim()"
+      class="btn btn-success">
+      <i class="fa fa-plus" aria-hidden="true"></i> Add Todo
+    </button>
   </div>
-  <div class="col">
-    name: <input [(ngModel)]="todo.name" type="text" class="form-control">
-    content: <input [(ngModel)]="todo.content" type="text" class="form-control">
-    <button (click)="addTodo()" [disabled]="!todo.name.trim() || !todo.content.trim()"
-      class="btn btn-primary m-2">add</button>
+
+  <!-- Three columns -->
+  <div class="columns">
+    <!-- Waiting Column -->
+    <div class="column waiting">
+      <h2>
+        <i class="fa fa-clock-o" aria-hidden="true"></i> 
+        Waiting ({{ todoService.waitingTodos().length }})
+      </h2>
+      @for (todo of todoService.waitingTodos(); track todo.id) {
+        <div class="todo-card">
+          <h3>{{ todo.name }}</h3>
+          <p>{{ todo.content }}</p>
+          <div class="actions">
+            <button 
+              (click)="moveToInProgress(todo.id)" 
+              class="btn btn-primary btn-sm"
+              title="Start working">
+              <i class="fa fa-play" aria-hidden="true"></i> Start
+            </button>
+            <button 
+              (click)="deleteTodo(todo.id)" 
+              class="btn btn-danger btn-sm delete"
+              title="Delete todo">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="empty-state">
+          <i class="fa fa-inbox" aria-hidden="true"></i>
+          <p>No waiting todos</p>
+        </div>
+      }
+    </div>
+
+    <!-- In Progress Column -->
+    <div class="column in-progress">
+      <h2>
+        <i class="fa fa-spinner" aria-hidden="true"></i> 
+        In Progress ({{ todoService.inProgressTodos().length }})
+      </h2>
+      @for (todo of todoService.inProgressTodos(); track todo.id) {
+        <div class="todo-card">
+          <h3>{{ todo.name }}</h3>
+          <p>{{ todo.content }}</p>
+          <div class="actions">
+            <button 
+              (click)="moveToDone(todo.id)" 
+              class="btn btn-success btn-sm"
+              title="Mark as complete">
+              <i class="fa fa-check" aria-hidden="true"></i> Complete
+            </button>
+            <button 
+              (click)="moveToWaiting(todo.id)" 
+              class="btn btn-warning btn-sm"
+              title="Move back to waiting">
+              <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
+            </button>
+            <button 
+              (click)="deleteTodo(todo.id)" 
+              class="btn btn-danger btn-sm delete"
+              title="Delete todo">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="empty-state">
+          <i class="fa fa-inbox" aria-hidden="true"></i>
+          <p>No todos in progress</p>
+        </div>
+      }
+    </div>
+
+    <!-- Done Column -->
+    <div class="column done">
+      <h2>
+        <i class="fa fa-check-circle" aria-hidden="true"></i> 
+        Done ({{ todoService.doneTodos().length }})
+      </h2>
+      @for (todo of todoService.doneTodos(); track todo.id) {
+        <div class="todo-card">
+          <h3>{{ todo.name }}</h3>
+          <p>{{ todo.content }}</p>
+          <div class="actions">
+            <button 
+              (click)="moveToInProgress(todo.id)" 
+              class="btn btn-info btn-sm"
+              title="Reopen todo">
+              <i class="fa fa-arrow-left" aria-hidden="true"></i> Reopen
+            </button>
+            <button 
+              (click)="deleteTodo(todo.id)" 
+              class="btn btn-danger btn-sm delete"
+              title="Delete todo">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      }
+      @empty {
+        <div class="empty-state">
+          <i class="fa fa-inbox" aria-hidden="true"></i>
+          <p>No completed todos</p>
+        </div>
+      }
+    </div>
   </div>
 </div>

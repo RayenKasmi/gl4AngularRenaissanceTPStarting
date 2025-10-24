@@ -1,8 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { Todo } from '../model/todo';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { Todo, TodoStatus } from '../model/todo';
 import { LoggerService } from '../../services/logger.service';
-
-let n = 1;
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +8,28 @@ let n = 1;
 export class TodoService {
   private loggerService = inject(LoggerService);
 
-  private todos: Todo[] = [];
+  // All todos stored in a signal
+  private todosSignal = signal<Todo[]>([
+    { id: 1, name: 'Learn Angular', content: 'Complete TP1 exercises', status: 'in progress' },
+    { id: 2, name: 'Setup project', content: 'Clone and install dependencies', status: 'done' },
+    { id: 3, name: 'Deploy app', content: 'Deploy to production', status: 'waiting' }
+  ]);
+
+  // Computed signals for each status column
+  waitingTodos = computed(() => 
+    this.todosSignal().filter(todo => todo.status === 'waiting')
+  );
+
+  inProgressTodos = computed(() => 
+    this.todosSignal().filter(todo => todo.status === 'in progress')
+  );
+
+  doneTodos = computed(() => 
+    this.todosSignal().filter(todo => todo.status === 'done')
+  );
+
+  // Get all todos (read-only)
+  todos = this.todosSignal.asReadonly();
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -22,38 +41,54 @@ export class TodoService {
    * @returns Todo[]
    */
   getTodos(): Todo[] {
-    return this.todos;
+    return this.todosSignal();
   }
 
   /**
-   *Elle permet d'ajouter un todo
+   * Ajoute un nouveau todo avec le statut 'waiting' par défaut
    *
-   * @param todo: Todo
-   *
+   * @param name: string
+   * @param content: string
    */
-  addTodo(todo: Todo): void {
-    this.todos.push(todo);
+  addTodo(name: string, content: string): void {
+    const newTodo: Todo = {
+      id: Date.now(),
+      name,
+      content,
+      status: 'waiting'
+    };
+    this.todosSignal.update(todos => [...todos, newTodo]);
   }
 
   /**
-   * Delete le todo s'il existe
+   * Met à jour le statut d'un todo
    *
-   * @param todo: Todo
-   * @returns boolean
+   * @param id: number
+   * @param status: TodoStatus
    */
-  deleteTodo(todo: Todo): boolean {
-    const index = this.todos.indexOf(todo);
-    if (index > -1) {
-      this.todos.splice(index, 1);
-      return true;
-    }
-    return false;
+  updateTodoStatus(id: number, status: TodoStatus): void {
+    this.todosSignal.update(todos =>
+      todos.map(todo =>
+        todo.id === id ? { ...todo, status } : todo
+      )
+    );
+  }
+
+  /**
+   * Delete le todo par son id
+   *
+   * @param id: number
+   */
+  deleteTodo(id: number): void {
+    this.todosSignal.update(todos =>
+      todos.filter(todo => todo.id !== id)
+    );
   }
 
   /**
    * Logger la liste des todos
    */
-  logTodos() {
-    this.loggerService.logger(this.todos);
+  logTodos(): void {
+    this.loggerService.logger(this.todosSignal());
   }
 }

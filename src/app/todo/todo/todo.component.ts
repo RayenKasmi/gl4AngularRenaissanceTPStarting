@@ -1,34 +1,47 @@
 import { Component, inject } from '@angular/core';
-import { Todo } from '../model/todo';
-import { TodoService } from '../service/todo.service';
-
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TodoService } from '../service/todo.service';
+import { TodoStatus } from '../model/todo';
 
 @Component({
-    selector: 'app-todo',
-    templateUrl: './todo.component.html',
-    styleUrls: ['./todo.component.css'],
-    providers: [TodoService],
-    standalone: true,
-    imports: [FormsModule],
+  selector: 'app-todo',
+  templateUrl: './todo.component.html',
+  styleUrls: ['./todo.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
 })
 export class TodoComponent {
-  private todoService = inject(TodoService);
-
-  todos: Todo[] = [];
-  todo = new Todo();
+  todoService = inject(TodoService);
+  
+  newTodoName = '';
+  newTodoContent = '';
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
-  constructor() {
-    this.todos = this.todoService.getTodos();
-  }
-  addTodo() {
-    this.todoService.addTodo(this.todo);
-    this.todo = new Todo();
+  constructor() {}
+
+  addTodo(): void {
+    if (this.newTodoName.trim() && this.newTodoContent.trim()) {
+      this.todoService.addTodo(this.newTodoName, this.newTodoContent);
+      this.newTodoName = '';
+      this.newTodoContent = '';
+    }
   }
 
-  deleteTodo(todo: Todo) {
-    this.todoService.deleteTodo(todo);
+  moveToWaiting(id: number): void {
+    this.todoService.updateTodoStatus(id, 'waiting');
+  }
+
+  moveToInProgress(id: number): void {
+    this.todoService.updateTodoStatus(id, 'in progress');
+  }
+
+  moveToDone(id: number): void {
+    this.todoService.updateTodoStatus(id, 'done');
+  }
+
+  deleteTodo(id: number): void {
+    this.todoService.deleteTodo(id);
   }
 }
