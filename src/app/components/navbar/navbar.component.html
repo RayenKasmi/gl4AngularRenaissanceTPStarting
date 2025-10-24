@@ -35,15 +35,14 @@
           routerLinkActive="active text-primary"
           >Cv</a
         >
-        @if (authService.isAuthenticated()) {
-<a
-         
+        @if (isAuthenticated()) {
+        <a
           class="nav-link"
           [routerLink]="['cv/add']"
           routerLinkActive="active text-primary"
           >Add Cv</a
         >
-}
+        }
         <a
           class="nav-link"
           [routerLink]="['todo']"
@@ -68,23 +67,16 @@
           routerLinkActive="active text-primary"
           >Rh</a
         >
-        @if (!authService.isAuthenticated()) {
-<a
-         
+        @if (!isAuthenticated()) {
+        <a
           class="nav-link"
           [routerLink]="['login']"
           routerLinkActive="active text-primary"
           >Login</a
         >
-}
-        @if (authService.isAuthenticated()) {
-<a
-         
-          class="nav-link"
-          (click)="logout()"
-          >Logout</a
-        >
-}
+        } @if (isAuthenticated()) {
+        <a class="nav-link" (click)="logout()">Logout</a>
+        }
       </div>
     </div>
   </div>

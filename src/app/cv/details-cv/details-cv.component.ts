@@ -22,6 +22,8 @@ export class DetailsCvComponent implements OnInit {
   private toastr = inject(ToastrService);
   authService = inject(AuthService);
 
+  readonly isAuthenticated = this.authService.userAuthenticated;
+
   cv: Cv | null = null;
 
   /** Inserted by Angular inject() migration for backwards compatibility */
