@@ -71,35 +71,35 @@ export class AuthService {
     })
   }
 
-  // login(credentials: CredentialsDto): Observable<LoginResponseDto> {
-  //   return this.http.post<LoginResponseDto>(API.login, credentials).pipe(
-  //     tap((response) => {
-  //       this.authState.set({
-  //         id: response.id, 
-  //         email: credentials.email,
-  //         isAuthenticated: true,
-  //       })
-  //     })
-  //   );
-  // }
-
   login(credentials: CredentialsDto): Observable<LoginResponseDto> {
-  const mockResponse: LoginResponseDto = {
-    id: 'mock-token-123',
-    ttl: 3600,
-    created: new Date(),
-    userId: 1,
-  };
-  return new Observable<LoginResponseDto>((observer) => {
-    this.authState.set({
-      id: mockResponse.id,
-      email: credentials.email,
-      isAuthenticated: true,
-    });
-    observer.next(mockResponse);
-    observer.complete();
-  });
+    return this.http.post<LoginResponseDto>(API.login, credentials).pipe(
+      tap((response) => {
+        this.authState.set({
+          id: response.id, 
+          email: credentials.email,
+          isAuthenticated: true,
+        })
+      })
+    );
   }
+
+  // login(credentials: CredentialsDto): Observable<LoginResponseDto> {
+  // const mockResponse: LoginResponseDto = {
+  //   id: 'test_token_123',
+  //   ttl: 3600,
+  //   created: new Date(),
+  //   userId: 1,
+  // };
+  // return new Observable<LoginResponseDto>((observer) => {
+  //   this.authState.set({
+  //     id: mockResponse.id,
+  //     email: credentials.email,
+  //     isAuthenticated: true,
+  //   });
+  //   observer.next(mockResponse);
+  //   observer.complete();
+  // });
+  // }
 
   logout() {
     this.clearAuthState();
