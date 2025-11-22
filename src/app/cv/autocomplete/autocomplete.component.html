@@ -1,3 +1,15 @@
 <form [formGroup]="form">
-  <input type="text" class="form-control" formControlName="search" />
+  <input type="text" class="form-control" formControlName="search" placeholder="Search CVs...">
 </form>
+
+<div *ngIf="filteredCvs$ | async as cvs">
+  <ul class="list-group mt-2">
+    <li 
+      class="list-group-item list-group-item-action" 
+      *ngFor="let cv of cvs"
+      (click)="onSelectCv(cv)"
+      style="cursor: pointer;">
+      {{ cv.firstname }} {{ cv.name }} - {{ cv.job }}
+    </li>
+  </ul>
+</div>
