@@ -27,3 +27,5 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+/tp_enonce
