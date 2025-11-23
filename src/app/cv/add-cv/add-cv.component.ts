@@ -1,5 +1,6 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { AbstractControl, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CvService } from "../services/cv.service";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
@@ -18,7 +19,8 @@ import { JsonPipe } from "@angular/common";
     JsonPipe
 ],
 })
-export class AddCvComponent {
+// implements onInit to subscribe to age changes and disable/enable image field based on age < 18
+export class AddCvComponent implements OnInit {
   private cvService = inject(CvService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
@@ -49,6 +51,20 @@ export class AddCvComponent {
       ],
     },
   );
+
+  ngOnInit(): void {
+    // using takeUntilDestroyed for automatic cleanup when component destroys
+    this.age.valueChanges.pipe(takeUntilDestroyed()).subscribe((age) => {
+      const imageControl = this.path;
+      if (!imageControl) return;
+
+      if (age < 18) {
+        imageControl.disable();
+      } else {
+        imageControl.enable();
+      }
+    });
+  }
 
   addCv() {
     this.cvService.addCv(this.form.value as Cv).subscribe({
