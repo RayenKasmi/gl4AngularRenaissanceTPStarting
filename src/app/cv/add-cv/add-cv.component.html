@@ -26,6 +26,11 @@
 }
   Job: <input type="text" class="form-control" formControlName="job" /> Path:
   <input type="text" class="form-control" formControlName="path" />
+  @if (age.value && age.value < 18) {
+    <div class="alert alert-warning">
+      Image upload required 18+
+    </div>
+  }
 
   <button [disabled]="form.invalid" class="btn btn-primary" (click)="addCv()">
     add cv
