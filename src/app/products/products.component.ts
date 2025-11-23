@@ -26,7 +26,7 @@ export class ProductsComponent {
   constructor(private productService: ProductService) {
     this.products$ = this.load$.pipe(
       concatMap((value) => this.productService.getProducts({limit: this.limit, skip: value*this.limit})),
-      takeWhile((value) => value.products.length > 0,true),
+      takeWhile((value) => value.total > value.skip + value.products.length, true), //prevents any unescacary get request since inclusive = true 
       map((value) => value.products),
       scan((acc , products) => [...acc, ...products]),
     )
