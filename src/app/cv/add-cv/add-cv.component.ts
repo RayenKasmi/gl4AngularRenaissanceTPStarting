@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, OnDestroy } from "@angular/core";
 import { AbstractControl, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CvService } from "../services/cv.service";
@@ -20,11 +20,14 @@ import { JsonPipe } from "@angular/common";
 ],
 })
 // implements onInit to subscribe to age changes and disable/enable image field based on age < 18
-export class AddCvComponent implements OnInit {
+// implements onDestroy to persist form data to localStorage for recovery after navigation
+export class AddCvComponent implements OnInit, OnDestroy {
   private cvService = inject(CvService);
   private router = inject(Router);
   private toastr = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
+
+  private readonly STORAGE_KEY = 'addCvFormData';
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -53,6 +56,13 @@ export class AddCvComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    // check if there's saved form data and restore it
+    const savedData = localStorage.getItem(this.STORAGE_KEY);
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      this.form.patchValue(parsedData);
+    }
+
     // using takeUntilDestroyed for automatic cleanup when component destroys
     this.age.valueChanges.pipe(takeUntilDestroyed()).subscribe((age) => {
       const imageControl = this.path;
@@ -66,9 +76,16 @@ export class AddCvComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    // save current form state to localStorage for recovery
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.form.value));
+  }
+
   addCv() {
     this.cvService.addCv(this.form.value as Cv).subscribe({
       next: (cv) => {
+        // clear saved form data since submission was successful
+        localStorage.removeItem(this.STORAGE_KEY);
         this.router.navigate([APP_ROUTES.cv]);
         this.toastr.success(`Le cv ${cv.firstname} ${cv.name}`);
       },
