@@ -50,6 +50,13 @@
           routerLinkActive="active text-primary"
           >Todo</a
         >
+         <a
+          class="nav-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLink]="['products']"
+          routerLinkActive="active text-primary"
+          >products</a
+        >
         <a
           class="nav-link"
           [routerLink]="['word']"
