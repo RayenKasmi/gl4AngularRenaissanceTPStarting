@@ -47,12 +47,7 @@ export class AddCvComponent implements OnInit, OnDestroy {
           updateOn: "blur",
         },
       ],
-      age: [
-        0,
-        {
-          validators: [Validators.required],
-        },
-      ],
+      age:[0, { validators: [Validators.required], updateOn: 'change' }],
     },
     {
       validators: [cinAgeValidator()],
@@ -82,6 +77,7 @@ export class AddCvComponent implements OnInit, OnDestroy {
     if (!imageControl) return;
 
     if (age !== null && age < 18) {
+      imageControl.reset();
       imageControl.disable();
     } else {
       imageControl.enable();
