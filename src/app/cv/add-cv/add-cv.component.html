@@ -49,6 +49,18 @@
       Cette Cin est invalide
     </div>
   }
+
+  @if (form.errors && form.errors['cinAgeMismatch'] && cin.touched && age.touched) {
+    <div class="alert alert-danger">
+      @if (age.value >= 60) {
+        <span>if age is superior to 60 then the first two digits of CIN must be between 00 and 19</span>
+      } @else {
+        <span>if age is inferior to 60 then the first two digits of CIN must be superior to 19</span>
+      }
+    </div>
+  }
+
+
   <label> Job: </label> 
   <input type="text" class="form-control" formControlName="job" /> 
   <label>Path: </label>

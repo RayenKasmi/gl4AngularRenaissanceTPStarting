@@ -7,6 +7,7 @@ import { APP_ROUTES } from "src/config/routes.config";
 import { Cv } from "../model/cv";
 import { JsonPipe } from "@angular/common";
 import { cinUniqueValidator } from "src/app/cv/validators/cin-unique.validator";
+import { cinAgeValidator } from "../validators/cin-age.validator";
 
 @Component({
     selector: "app-add-cv",
@@ -48,6 +49,9 @@ export class AddCvComponent {
         },
       ],
     },
+    {
+      validators: [cinAgeValidator()],
+    }
   );
 
   addCv() {
