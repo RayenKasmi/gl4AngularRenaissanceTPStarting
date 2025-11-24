@@ -15,4 +15,9 @@ import { ItemComponent } from "../item/item.component";
 })
 export class ListComponent {
   @Input() cvs: Cv[] | null = [];
+  @Output() cvSelected = new EventEmitter<Cv>();
+
+  onCvSelected(cv: Cv) {
+    this.cvSelected.emit(cv);
+  }
 }

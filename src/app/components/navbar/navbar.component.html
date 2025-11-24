@@ -35,6 +35,12 @@
           routerLinkActive="active text-primary"
           >Cv</a
         >
+        <a
+          class="nav-link"
+          [routerLink]="['list']"
+          routerLinkActive="active text-primary"
+          >List</a
+        >
         @if (authService.isAuthenticated()) {
 <a
          

@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="col">
+    <div class="alert alert-warning">
+      {{ date | date : "full" | uppercase }}
+    </div>
+    <app-list [cvs]="cvs()" (cvSelected)="onCvSelected($event)"></app-list>
+  </div>
+  <div class="col">
+    <app-details-cv [cv]="selectedCv()"></app-details-cv>
+  </div>
+</div>

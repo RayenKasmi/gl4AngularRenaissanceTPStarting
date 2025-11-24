@@ -16,6 +16,7 @@ export class ItemComponent {
 
   @Input({ required: true }) cv!: Cv;
   @Input() size = 50;
+  @Output() cvSelected = new EventEmitter<Cv>();
 
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
@@ -23,5 +24,6 @@ export class ItemComponent {
 
   onSelectCv() {
     this.cvService.selectCv(this.cv);
+    this.cvSelected.emit(this.cv);
   }
 }
