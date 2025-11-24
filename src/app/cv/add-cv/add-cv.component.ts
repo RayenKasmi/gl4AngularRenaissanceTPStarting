@@ -67,22 +67,31 @@ export class AddCvComponent implements OnInit, OnDestroy {
       this.form.patchValue(parsedData);
     }
 
+    // run initial check in case age was restored from localStorage
+    this.checkAgeAndToggleImageField(this.age.value);
+
     // using takeUntilDestroyed for automatic cleanup when component destroys
     this.age.valueChanges.pipe(takeUntilDestroyed()).subscribe((age) => {
-      const imageControl = this.path;
-      if (!imageControl) return;
-
-      if (age < 18) {
-        imageControl.disable();
-      } else {
-        imageControl.enable();
-      }
+      this.checkAgeAndToggleImageField(age);
     });
+  }
+
+  // extracted method to avoid duplication and ensure consistent behavior
+  private checkAgeAndToggleImageField(age: number | null): void {
+    const imageControl = this.path;
+    if (!imageControl) return;
+
+    if (age !== null && age < 18) {
+      imageControl.disable();
+    } else {
+      imageControl.enable();
+    }
   }
 
   ngOnDestroy(): void {
     // save current form state to localStorage for recovery
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.form.value));
+    // using getRawValue to include disabled controls
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.form.getRawValue()));
   }
 
   addCv() {
