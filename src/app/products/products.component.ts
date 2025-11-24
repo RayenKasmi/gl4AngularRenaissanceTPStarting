@@ -32,8 +32,6 @@ export class ProductsComponent {
   load = signal(0);
   stopLoading = signal(false);
 
-  products = signal<Product[]>([]);
-
   productResourceRequest = rxResource(
     {
       request: () => {
@@ -53,21 +51,13 @@ export class ProductsComponent {
             return response.products;
           }
         ),
+        scan((acc, value) => [...acc, ...value]),
       )}
     }
   )
 
   constructor() {
-    effect(() => {
-      const newProducts = this.productResourceRequest.value();
-
-      if(newProducts && newProducts.length > 0){
-        untracked(
-          () => this.products.update((value) => [...value,...newProducts])
-        );
-      }
-    })
-  }
+}
 
   loadMore() {
     if (!this.productResourceRequest.isLoading()) { // could add && !this.stopLoading() in the condition but i wanted to screw with the rxresource itslef to block it
