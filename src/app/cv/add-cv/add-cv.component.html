@@ -1,8 +1,8 @@
 <p>add-cv works!</p>
 <form [formGroup]="form">
-  Name:
+  <label> Name: </label>
   <input type="text" class="form-control" formControlName="name" />
-  @if (form.get('name')?.errors && form.get('name')?.touched) {
+  @if (name.errors && name.touched) {
 <div
    
     class="alert alert-danger"
@@ -10,24 +10,51 @@
     Ce champ est obligatoire
   </div>
 }
-  Firstname:
-  <input type="text" class="form-control" formControlName="firstname" /> Age:
-  <input type="text" class="form-control" formControlName="age" /> Cin:
+  <label> Firstname: </label>
+  <input type="text" class="form-control" formControlName="firstname" /> 
+  <label> Age: </label>
+  <input type="text" class="form-control" formControlName="age" /> 
+  <label> Cin: </label>
   <input type="text" class="form-control" formControlName="cin" />
+
+  @if (cin.errors && cin.touched) {
+    @if (cin.errors['required']) {
+      <div class="alert alert-danger">
+        Le CIN est obligatoire
+      </div>
+    }
+    @if (cin.errors['pattern']) {
+      <div class="alert alert-danger">
+        Le CIN doit contenir exactement 8 chiffres
+      </div>
+    }
+  }
+
+  @if (cin.errors && cin.errors['cinTaken'] && !cin.pending) {
+    <div class="alert alert-danger">
+      Ce CIN existe deja dans la base de données
+    </div>
+  }
+  
+  @if (cin.pending) {
+    <div class="alert alert-info">
+      Verification du CIN en cours
+    </div>
+  }
+
   @if (
-      form.errors && form.errors['cinFirstCars'] && cin?.touched && age?.touched
+      form.errors && form.errors['cinFirstCars'] && cin.touched && age.touched
     ) {
-<div
-   
-    class="alert alert-danger"
-  >
-    Cette Cin est invalide
-  </div>
-}
-  Job: <input type="text" class="form-control" formControlName="job" /> Path:
+    <div class="alert alert-danger">
+      Cette Cin est invalide
+    </div>
+  }
+  <label> Job: </label> 
+  <input type="text" class="form-control" formControlName="job" /> 
+  <label>Path: </label>
   <input type="text" class="form-control" formControlName="path" />
 
-  <button [disabled]="form.invalid" class="btn btn-primary" (click)="addCv()">
+  <button [disabled]="form.invalid || form.pending" class="btn btn-primary" (click)="addCv()">
     add cv
   </button>
 </form>

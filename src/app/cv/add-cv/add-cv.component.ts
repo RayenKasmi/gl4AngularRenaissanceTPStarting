@@ -6,6 +6,7 @@ import { ToastrService } from "ngx-toastr";
 import { APP_ROUTES } from "src/config/routes.config";
 import { Cv } from "../model/cv";
 import { JsonPipe } from "@angular/common";
+import { cinUniqueValidator } from "src/app/cv/validators/cin-unique.validator";
 
 @Component({
     selector: "app-add-cv",
@@ -24,9 +25,6 @@ export class AddCvComponent {
   private toastr = inject(ToastrService);
   private formBuilder = inject(FormBuilder);
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
   constructor() {}
 
   form = this.formBuilder.group(
@@ -39,6 +37,8 @@ export class AddCvComponent {
         "",
         {
           validators: [Validators.required, Validators.pattern("[0-9]{8}")],
+          asyncValidators: [cinUniqueValidator()],
+          updateOn: "blur",
         },
       ],
       age: [
