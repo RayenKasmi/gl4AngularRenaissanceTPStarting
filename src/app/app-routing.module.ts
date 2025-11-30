@@ -14,6 +14,7 @@ import { DetailsCvComponent } from "./cv/details-cv/details-cv.component";
 import { RhComponent } from "./optimizationPattern/rh/rh.component";
 import { RainbowComponent } from "./components/rainbow/rainbow.component";
 import { ProductsComponent } from "./products/products.component";
+import { UserListComponent } from "./optimizationPattern/user-list/user-list.component";
 
 const routes: Route[] = [
   { path: "login", component: LoginComponent },
@@ -39,6 +40,8 @@ const routes: Route[] = [
     children: [{ path: "color", component: ColorComponent }],
   },
   { path: "products" , component: ProductsComponent },
+  { path: "user_list" , component: UserListComponent },
+  { path: "rh" , component: RhComponent },
   { path: "**", component: NF404Component },
 ];
 
