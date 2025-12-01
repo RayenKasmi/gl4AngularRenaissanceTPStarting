@@ -1,4 +1,9 @@
-import { Component, inject, signal } from "@angular/core";
+import {
+  Component,
+  inject,
+  computed,
+  resource,
+} from '@angular/core';
 import { Cv } from "../model/cv";
 import { LoggerService } from "../../services/logger.service";
 import { ToastrService } from "ngx-toastr";
@@ -25,7 +30,23 @@ export class CvComponent {
   private toastr = inject(ToastrService);
   private cvService = inject(CvService);
 
-  cvs = signal<Cv[]>([]);
+
+
+  cvsResource = resource({
+    loader: () =>
+      this.cvService.getCvs(),
+    onError: () => {
+      this.toastr.error(`
+        Attention!! Les données sont fictives, problème avec le serveur.
+        Veuillez contacter l'admin.
+      `);
+      return this.cvService.getFakeCvs();
+    },
+  });
+
+  cvs = computed(() => this.cvsResource().value() ?? []);
+
+
   selectedCv = this.cvService.selectedCv;
   /*   selectedCv: Cv | null = null; */
   date = new Date();
@@ -34,17 +55,6 @@ export class CvComponent {
   constructor(...args: unknown[]);
 
   constructor() {
-    this.cvService.getCvs().subscribe({
-      next: (cvs) => {
-        this.cvs.set(cvs);
-      },
-      error: () => {
-        this.cvs.set(this.cvService.getFakeCvs());
-        this.toastr.error(`
-          Attention!! Les données sont fictives, problème avec le serveur.
-          Veuillez contacter l'admin.`);
-      },
-    });
     this.logger.logger("je suis le cvComponent");
     this.toastr.info("Bienvenu dans notre CvTech");
   }
