@@ -1,8 +1,6 @@
 import {
   Component,
   inject,
-  computed,
-  resource,
 } from '@angular/core';
 import { Cv } from "../model/cv";
 import { LoggerService } from "../../services/logger.service";
@@ -12,6 +10,9 @@ import { ListComponent } from "../list/list.component";
 import { CvCardComponent } from "../cv-card/cv-card.component";
 import { EmbaucheComponent } from "../embauche/embauche.component";
 import { UpperCasePipe, DatePipe } from "@angular/common";
+import { catchError, of } from 'rxjs';
+import { rxResource } from '@angular/core/rxjs-interop';
+
 @Component({
     selector: "app-cv",
     templateUrl: "./cv.component.html",
@@ -30,22 +31,19 @@ export class CvComponent {
   private toastr = inject(ToastrService);
   private cvService = inject(CvService);
 
-
-
-  cvsResource = resource({
-    loader: () =>
-      this.cvService.getCvs(),
-    onError: () => {
-      this.toastr.error(`
-        Attention!! Les données sont fictives, problème avec le serveur.
-        Veuillez contacter l'admin.
-      `);
-      return this.cvService.getFakeCvs();
-    },
+  cvsResource = rxResource<Cv[], unknown>({
+    loader: () => this.cvService.getCvs().pipe(
+      catchError((error) => {
+        this.toastr.error(`
+          Attention!! Les données sont fictives, problème avec le serveur.
+          Veuillez contacter l'admin.
+        `);
+        return of(this.cvService.getFakeCvs());
+      })
+    ),
   });
 
-  cvs = computed(() => this.cvsResource().value() ?? []);
-
+  cvs = this.cvsResource.value;
 
   selectedCv = this.cvService.selectedCv;
   /*   selectedCv: Cv | null = null; */

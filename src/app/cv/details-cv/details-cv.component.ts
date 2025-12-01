@@ -7,6 +7,8 @@ import { APP_ROUTES } from '../../../config/routes.config';
 import { AuthService } from '../../auth/services/auth.service';
 
 import { DefaultImagePipe } from '../pipes/default-image.pipe';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { catchError, EMPTY, map, tap } from 'rxjs';
 
 @Component({
     selector: 'app-details-cv',
@@ -15,31 +17,47 @@ import { DefaultImagePipe } from '../pipes/default-image.pipe';
     standalone: true,
     imports: [DefaultImagePipe],
 })
-export class DetailsCvComponent implements OnInit {
+export class DetailsCvComponent {
   private cvService = inject(CvService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private toastr = inject(ToastrService);
   authService = inject(AuthService);
 
-  cv = signal<Cv | null>(null);
+  private cvId = toSignal(
+    this.activatedRoute.params.pipe(
+      map(params => +params['id'] || 0)
+    ),
+    { initialValue: 0 }
+  );
 
+
+  cvResource = rxResource<Cv | null, number>({
+    request: () => this.cvId(), // resource refetches when cvId changes
+    
+    loader: ({ request: id }) => {
+      if (!id || id === 0) {
+        this.router.navigate([APP_ROUTES.cv]);
+        return EMPTY; 
+      }
+      return this.cvService.getCvById(id).pipe(
+          catchError((error) => {
+          this.toastr.error('CV introuvable');
+          this.router.navigate([APP_ROUTES.cv]);
+          return EMPTY;
+        })
+      );
+    },
+  });
+
+  cv = this.cvResource.value;
+  
   /** Inserted by Angular inject() migration for backwards compatibility */
   constructor(...args: unknown[]);
   constructor() {}
 
-  ngOnInit() {
-    const id = this.activatedRoute.snapshot.params['id'];
-    this.cvService.getCvById(+id).subscribe({
-      next: (cv) => {
-        this.cv.set(cv);
-      },
-      error: () => {
-        this.router.navigate([APP_ROUTES.cv]);
-      },
-    });
-  }
   deleteCv(cv: Cv) {
+    // still uses subscribe since it's not data fetching but an action
     this.cvService.deleteCvById(cv.id).subscribe({
       next: () => {
         this.toastr.success(`${cv.name} supprimé avec succès`);
