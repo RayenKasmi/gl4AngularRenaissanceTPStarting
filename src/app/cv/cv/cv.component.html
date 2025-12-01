@@ -11,7 +11,7 @@
 </div>
 <!-- @defer: defers loading of embauche component until it enters viewport -->
 <!-- this improves initial page load by not loading the pre-hired list immediately -->
-@defer (on viewport) {
+@defer (on viewport; prefetch on idle) {
   <app-embauche></app-embauche>
 } @placeholder {
   <!-- placeholder shown before component enters viewport -->
