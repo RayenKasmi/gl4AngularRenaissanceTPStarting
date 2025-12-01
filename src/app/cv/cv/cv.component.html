@@ -9,4 +9,20 @@
     <app-cv-card [cv]="selectedCv()"></app-cv-card>
   </div>
 </div>
-<app-embauche></app-embauche>
+<!-- @defer: defers loading of embauche component until it enters viewport -->
+<!-- this improves initial page load by not loading the pre-hired list immediately -->
+@defer (on viewport) {
+  <app-embauche></app-embauche>
+} @placeholder {
+  <!-- placeholder shown before component enters viewport -->
+  <div class="alert alert-light mt-2 text-center text-muted">
+    <i class="bi bi-people"></i>
+    Liste des pré-embauchés
+  </div>
+} @loading (minimum 300ms) {
+  <!-- loading state with minimum duration to prevent flash -->
+  <div class="alert alert-info mt-2 text-center">
+    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+    Chargement des pré-embauchés...
+  </div>
+}
